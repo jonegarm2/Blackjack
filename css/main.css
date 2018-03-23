@@ -1,0 +1,38 @@
+body {
+    background-image: url(https://i.imgur.com/fiwOCbz.png);
+}
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+section {
+    margin: 30px;
+}
+
+button {
+    width: 500px;
+    padding: 30px;
+    background-color: dodgerblue;
+    color: white;
+    border-radius: 6px;
+    font-size: 30px;
+}
+
+button:hover {
+    background-color: white;
+    color: dodgerblue;
+}
+
