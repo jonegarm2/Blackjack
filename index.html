@@ -5,31 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Black Jack Project</title>
+    <link rel="stylesheet" href="css/card-deck-css/css/cardstarter.min.css">
     <link rel="stylesheet" href="css/main.css">
     <script defer src="js/main.js"></script>
 
 </head>
 <body>
-    <h1>Games of Chance!</h1>
+    <header id="bankroll">Bankroll</header>
+    //figure out how to get a showing
+    <div id="dealer-cards" class="cards"></div>
+    <div id="player-cards" class="cards"></div >
     <main>
-
-        <div class="gameplay">
-            <button>Hit</button>
-            <button>Stay</button>
-            <button>Double</button>
+        <div id="option1" class="gameplay">
+            <button id="deal">Deal</button>
+            <button id="hit">Hit</button>
+            <button id="stay">Stay</button>
+            <button id="double">Double</button>
         </div>
-    </main>
-    <footer>
-        <div class="betting">
-            <button>$1</button>
-            <button>$5</button>
-            <button>$25</button>
-            <button>$100</button>
-            <h3>Bankroll</h3>
+        <div id="option2" class="">
+            <button class='betting'>$1</button>
+            <button class='betting'>$5</button>
+            <button class='betting'>$25</button>
+            <button class='betting'>$100</button>
         </div>
-    </footer>
-    
-    
+    </main>  
 </body>
     
 </html>
