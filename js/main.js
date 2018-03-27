@@ -21,47 +21,62 @@ class Card {
   /*----- constants -----*/
 
 /*----- app's state (variables) -----*/
-var deck, bankroll, bet; //gameOn;
+var deck, bankroll, bet;
 var dealerHand = [];
 var playerHand = [];
+var playSum = 0
+var dealSum = 0
+var canWager = true
 
 /*----- cached element references -----*/
+var cash = document.getElementById('cash');
+var wager = document.getElementById('bet');
 var dealerCardsEl= document.getElementById('dealer-cards')
 var playerCardsEl= document.getElementById('player-cards')
 
 //var gameplay = document.querySelector('.gameplay')
 /*----- event listeners -----*/
 document.getElementById('option2').addEventListener('click', betting);
-//document.getElementById('option1').addEventListener('click', gameplay);
 document.getElementById('deal').addEventListener('click', deal);
 document.getElementById('hit').addEventListener('click', hit);
 document.getElementById('stay').addEventListener('click', stay);
 document.getElementById('double').addEventListener('click', double);
+
 /*----- functions -----*/
 function betting(evt) {
-  let placeBet = parseInt(evt.target.classList[1]);
-  console.log(placeBet);
-  if (placeBet > bankroll) {
-      return;
-  } else if (bankroll > 0) {
-      bankroll = (bankroll -= placeBet);
-      bet = (bet += placeBet);
+
+  if (!canWager) {
+    return;
   }
-  if (bankroll === 0) msg = 'You lost it all!'
-}
-function deal(evt) {
-  //lock in bet
-  function shuffle(evt) {
-    var shuffledDeck = [];
-    while (deck.length) {
-      var rnd = Math.floor(Math.random() * deck.length);
-      shuffledDeck.push(deck.splice(rnd, 1)[0]);
+
+  if (event.target.classList[0] === "betting") {
+    let placeBet = parseInt(evt.target.classList[1]);
+    if (placeBet > bankroll) {
+        return;
+    } else if (bankroll > 0) {
+        bankroll -= placeBet;
+        bet += placeBet;
     }
-    deck = shuffledDeck;
-    console.log(deck);
+    if (bankroll === 0) msg = 'You lost it all!'
+  }
+
+  render();
+}
+
+function shuffle() {
+  var shuffledDeck = [];
+  while (deck.length) {
+    var rnd = Math.floor(Math.random() * deck.length);
+    shuffledDeck.push(deck.splice(rnd, 1)[0]);
+  }
+  deck = shuffledDeck;
+}
+
+function deal() {
+  canWager = false;
+  
     
-    //deal function push 2 cards into playerHand and dealerHand
-    //check for blackjack (win/lose if there)if no blackjack go to render with multiples
+
             //create dealer and player blackjack variables
     //fade button after deal to prevent problems
 
@@ -74,28 +89,26 @@ function deal(evt) {
     // } else if (!dealerBlackjack && playerBlackjack) {
     //   return ('You Won!')
     // };
-  }
-  shuffle(); {
+  
+  shuffle();
   playerHand.push(...deck.splice(deck.length-2, 2));
   dealerHand.push(...deck.splice(deck.length-2, 2));
-  };
   document.getElementById('deal').removeEventListener('click', deal);
+  if (playSum === 21) return true;
 
   render();
-
-
 }
+
+
 function hit(evt) {
-  var sum = 0;
   playerHand.push(deck.pop(deck.length-1));
   //add card from deck 
   playerHand.forEach(function (card) {
-    sum += card.value;
+    playSum += card.value;
     
   });
-  console.log(sum);
   render();
-  if(sum > 21); {
+  if(playSum > 21); {
     document.getElementById('hit').removeEventListener('click', hit);
     return false;
     //check winner
@@ -110,7 +123,7 @@ function stay(evt) {
   //game logic look for winner
   //flip over dealer face card
 
-  if(dealer <= 17) {
+  if(dealSum <= 17) {
     return deck.pop[dealerHand.unshift()]; 
   } else if(dealer > 21) {
     return 'You Won!'
@@ -126,6 +139,15 @@ function stay(evt) {
     return//return to betting screen now 
   };
 
+function double(evt) {
+  playerHand.push(deck.pop(deck.length-1));
+  //double the bet
+  document.getElementById('double').removeEventListener('click', double);
+  document.getElementById('hit').removeEventListener('click', hit);
+  document.getElementById('stay').removeEventListener('click', stay);
+  if(playSum > 21) return false;
+  render();
+}
 
 
 
@@ -149,12 +171,17 @@ function stay(evt) {
     playerHand.forEach(function(card, idx) {
       playerHtml += `<div class="card ${card.face}"></div>`;
     });
-    console.log(playerHtml);
+
+    // Write code to take bet and bankroll and add to DOM
+
     
     dealerCardsEl.innerHTML = dealerHtml;
     playerCardsEl.innerHTML = playerHtml;
     //need this for player but all face up as well
     //check 
+    cash.innerHTML= `$${bankroll}.00`;
+    wager.innerHTML= `$${bet}.00`;
+
   }
 
 
@@ -166,6 +193,10 @@ function stay(evt) {
 
 
 function initialize() {
-    //on load 
-    bankroll = '$200.00'
+    
+    bankroll = 200;
+    bet = 0
+    render();
+    
 }
+initialize();

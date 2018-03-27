@@ -14,9 +14,10 @@ body {
 }
 
 header {
-    display: inline-block;
+    display: inline;
     position: absolute;
     top: 0;
+    right: 0;
 }
 
 main {
@@ -35,8 +36,8 @@ main {
 
 button {
     width: 70px;
-    margin: 30px 30px 0 30px;
-    padding: 10px;
+    margin: 20px 30px 0 30px;
+    padding: 5px;
     background-color: red;
     color: white;
     border-radius: 6px;
@@ -49,7 +50,28 @@ button:hover {
     color: red;
 }
 
-#reset {
-    
+input {
+    width: 70px;
+    margin: 30px 30px 0 30px;
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+    border: none;
 }
 
+input:hover {
+    background-color: white;
+    color: red;
+}
+
+
+header > div {
+    color: white;
+}
+
+.cards {
+    width: 600px;
+    height: 200px;
+}
