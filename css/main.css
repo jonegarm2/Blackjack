@@ -17,13 +17,13 @@ header {
     display: inline;
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
 }
 
 main {
     display: inline;
     position: absolute;
-    bottom: 0;
+    bottom: 10px;
 }
 
 #option1 {
@@ -50,23 +50,6 @@ button:hover {
     color: red;
 }
 
-input {
-    width: 70px;
-    margin: 30px 30px 0 30px;
-    padding: 10px;
-    background-color: red;
-    color: white;
-    border-radius: 6px;
-    font-size: 12px;
-    border: none;
-}
-
-input:hover {
-    background-color: white;
-    color: red;
-}
-
-
 header > div {
     color: white;
 }
@@ -75,3 +58,27 @@ header > div {
     width: 600px;
     height: 200px;
 }
+
+#cash, #bet {
+    color: white;
+    border-color: white;
+    background-color: red;
+}
+
+#win-popup{
+    position: relative;
+    top: 200px;
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    color: red;
+ }
+ #win-popup .container {
+    background-color: black;
+    opacity: .8;
+    padding: 30px;
+    position: absolute;
+    top: -700px;
+    width: 100%;
+    box-sizing: border-box;
+ }
