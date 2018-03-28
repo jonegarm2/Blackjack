@@ -18,63 +18,50 @@ class Card {
       deck.push(new Card(suit + face, val));
     });
   }); 
-  // console.log(deck);
 
 /*----- app's state (variables) -----*/
-var deck, bankroll, bet;
+var deck, inProgress, bankroll, bet;
 var dealerHand = [];
 var playerHand = [];
-var playSum = 0
-var dealSum = 0
-var canWager = true
-var winPopup = document.getElementById('win-popup');
+var winner, blackjack;
+var instruction = null;
+//var winPopup = document.getElementById('win-popup');
 
 /*----- cached element references -----*/
 var cash = document.getElementById('cash');
 var wager = document.getElementById('bet');
+var betBtns = document.getElementById('option2');
+var dealBtn = document.getElementById('deal');
+var doublelBtn = document.getElementById('double');
 var dealerCardsEl= document.getElementById('dealer-cards')
 var playerCardsEl= document.getElementById('player-cards')
-
+var winPopup = document.getElementById('win-popup');
 
 //need to work on this to disable//fade betting buttons
-var btn = document.getElementsByClassName("betting"); btn.disabled = false; 
+                                      //var btn = document.getElementsByClassName("betting"); btn.disabled = false; 
 
 
 /*----- event listeners -----*/
 document.getElementById('option2').addEventListener('click', betting);
-document.getElementById('deal').addEventListener('click', deal);
+dealBtn.addEventListener('click', deal);
 document.getElementById('hit').addEventListener('click', hit);
 document.getElementById('stay').addEventListener('click', stay);
-document.getElementById('double').addEventListener('click', double);
+doublelBtn.addEventListener('click', double);
 document.getElementById('reset').addEventListener('click', initialize);
 
 /*----- functions -----*/
 initialize();
 
 function betting(evt) {
-
-  if (!canWager) {
-    return;
-  }
-  //need to prevent negative bet
-  if (event.target.classList[0] === "betting") {
+  if (evt.target.classList[0] === "betting") {
+    dealerHand = [];
+    playerHand = [];
     let placeBet = parseInt(evt.target.classList[1]);
-    if (placeBet > bankroll) {
-
-
-        btn.disable = !false;
-
-
-        //check this class system
-    } else if (bankroll = 0) {
-        bankroll -= placeBet;
-        bet += placeBet;
-    }
-    if (bankroll === 0) {
-      
+    if (placeBet <= bankroll && ((bankroll + placeBet) >= 0) && ((bet + placeBet) >= 0)) {
+      bankroll -= placeBet;
+      bet += placeBet;
     }
   }
-
   render();
 }
 
@@ -88,167 +75,129 @@ function shuffle() {
 }
 
 function deal() {
+  inProgress = true;
+  winner = null;
+  blackjack = null;
   canWager = false;
   shuffle();
   playerHand.push(...deck.splice(deck.length-2, 2));
   dealerHand.push(...deck.splice(deck.length-2, 2));
-  document.getElementById('deal').removeEventListener('click', deal);
-  if (playSum === 21) {
-
-
-
-    // make this work
-    //double check this function 
-    return winPopup.classList.add('popup');
+  var playerTotal = computeHand(playerHand);
+  var dealerTotal = computeHand(dealerHand);
+  if (dealerTotal === 21 && playerTotal === 21) {
+    blackjack = "t";
+  } else if (dealerTotal === 21) {
+    blackjack = "d";
+  } else if (playerTotal === 21) {
+    blackjack = "p";
   }
-  
+  inProgress = !blackjack;  
+  updateWinner();
   render();
 }
-//create dealer and player blackjack variables
-//fade button after deal to prevent problems
 
-// if(dealerBlackjack && !playerBlackjack) {
-//   return ('You lost!');
-//   break;
-// } else if(dealerBlackjack && playerBlackjack) {
-//   return ('Draw!');
-//   break;
-// } else if (!dealerBlackjack && playerBlackjack) {
-//   return ('You Won!')
-// };
-  
-////////
-//hit can still be pushed before deal fix that
-////////
+function updateWinner() {
+  if (blackjack) {
+    winner = blackjack;
+  } else if (!inProgress) {
+    var playerTotal = computeHand(playerHand);
+    var dealerTotal = computeHand(dealerHand);
+    if (playerTotal > dealerTotal) {
+      winner = 'p';
+    } else if (dealerTotal > playerTotal) {
+      winner = 'd';
+    } else {
+      winner = 't';
+    }
+  }
+  if (winner) computeWinnings();
+}
 
+function computeWinnings() {
+  // use blackjack and/or winner vars to compute
+  if (winner === 't') {
+    bankroll += bet;
+  } else if (blackjack === 'p') {
+    bankroll += Math.floor(bet * 1.5 + .5) + bet;
+  } else if (winner === 'p') {
+    bankroll += bet * 2;
+  }
+  bet = 0;
+}
 
 function hit(evt) {
-  playerHand.push(deck.pop(deck.length-1));
-  playerHand.forEach(function (card) {
-    playSum += card.value;
-    render();
-    document.getElementById('double').removeEventListener('click', double);
-    });
-      if(playSum > 21); {
-        return false;
-    //check winner
-    //why doesn't this work
+  playerHand.push(deck.pop());
+  if (computeHand(playerHand) > 21) {
+    inProgress = false;
+    updateWinner();
   }
-      //if bust show lose screen
-  //if no bust then contineu
-      //fade double button 
+  render();
 };
 
-function stay(evt) {
-  document.getElementById('deal').removeEventListener('click', deal)
-  document.getElementById('hit').removeEventListener('click', hit)
-  document.getElementById('double').removeEventListener('click', double)
-  computeHand();
-  if(dealSum <= 17) {
-    return deck.pop[dealerHand.unshift()]; 
-  } else if(dealer > 21) {
-    return 
-  }else if(dealerHand === playerHand) {
-    return 
-  } else if(dealerHand < playerHand) {
-    return 
-  } else if(dealerHand > playerHand) {
-    return 
-  };
-
-  //check for winner function
+function stay() {
+  inProgress = false;
+  dealerDraw();
+  updateWinner();
   render(); 
-    // if()
-    return//return to betting screen now 
-  };
+}
+
+function dealerDraw() {
+  while(computeHand(dealerHand) < 17 || computeHand(dealerHand) > 21) {
+    dealerHand.push(deck.pop()); 
+  }
+}
 
 function double(evt) {
-  playerHand.push(deck.pop(deck.length-1));
-  //double the bet
-  document.getElementById('double').removeEventListener('click', double);
-  document.getElementById('hit').removeEventListener('click', hit);
-  document.getElementById('stay').removeEventListener('click', stay);
-
-  //check for winner
-
+  playerHand.push(deck.pop());
+  bet *= 2
+  inProgress = false;
+  dealerDraw();
+  updateWinner();
   render();
 }
 
-
-/////////
-//  WHERE DOES THIS GO?
-////////
-function computeHand(hand) {
+function computeHand(hand) { 
   var total = 0;
   var numAces = 0;
   hand.forEach(c => {
     total += c.value;
     numAces += c.value === 11 ? 1 : 0;
   });
- 
   while (total > 21 && numAces) {
     total -= 10;
     numAces--;
   }
   return total;
- }
+}
 
-
- ///////////////
-
- ///////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  function render() {
-    var playerHtml= '';
-    var dealerHtml= '';
-    dealerHand.forEach(function(card, idx) {
-      dealerHtml += `<div class="card ${idx ? card.face : 'back'}"></div>`;
-    });
-    playerHand.forEach(function(card, idx) {
-      playerHtml += `<div class="card ${card.face}"></div>`;
-    });
-
-    // Write code to take bet and bankroll and add to DOM
-
-    
-    dealerCardsEl.innerHTML = dealerHtml;
-    playerCardsEl.innerHTML = playerHtml;
-    //need this for player but all face up as well
-    //check
-    
-    //why no bankroll??????
-    cash.innerHTML= `$${bankroll}.00`;
-    wager.innerHTML= `$${bet}.00`;
-
-
-
+function render() {
+  var playerHtml = '';
+  var dealerHtml = '';
+  dealerHand.forEach(function(card, idx) {
+    dealerHtml += `<div class="card ${idx || !inProgress ? card.face : 'back'}"></div>`;
+  });
+  playerHand.forEach(function(card, idx) {
+    playerHtml += `<div class="card ${card.face}"></div>`;
+  });
+  dealerCardsEl.innerHTML = dealerHtml;
+  playerCardsEl.innerHTML = playerHtml;
+  cash.innerHTML= `Bankroll: $${bankroll}.00`;
+  wager.innerHTML= `Bet: $${bet}.00`;
+  betBtns.style.visibility = inProgress ? 'hidden' : 'visible';
+  dealBtn.style.visibility = inProgress || bet === 0 ? 'hidden' : 'visible';
+  doublelBtn.style.visibility = inProgress && playerHand.length === 2 && bankroll >= bet ? 'visible' : 'hidden';
+  if (winner) {
+    winPopup.innerHTML='PUSH!';
+    winPopup.innerHTML='Winner Winner Chicken Dinner';
+    winPopup.innerHTML='You Lose';
   }
-
-
-
-
-
-
-
-
+}
 
 function initialize() {
-    
-    bankroll = 200;
-    bet = 0
-    render();
-    
+  bankroll = 200;
+  bet = 0;
+  instructions = null;
+  render();
 }
+
+
