@@ -25,7 +25,7 @@ var dealerHand = [];
 var playerHand = [];
 var winner, blackjack;
 var instruction = null;
-//var winPopup = document.getElementById('win-popup');
+var winPopup = document.getElementById('win-popup');
 
 /*----- cached element references -----*/
 var cash = document.getElementById('cash');
@@ -36,6 +36,9 @@ var doublelBtn = document.getElementById('double');
 var dealerCardsEl= document.getElementById('dealer-cards')
 var playerCardsEl= document.getElementById('player-cards')
 var winPopup = document.getElementById('win-popup');
+var hitBtn = document.getElementById('hit');
+var stayBtn = document.getElementById('stay');
+
 
 //need to work on this to disable//fade betting buttons
                                       //var btn = document.getElementsByClassName("betting"); btn.disabled = false; 
@@ -48,6 +51,7 @@ document.getElementById('hit').addEventListener('click', hit);
 document.getElementById('stay').addEventListener('click', stay);
 doublelBtn.addEventListener('click', double);
 document.getElementById('reset').addEventListener('click', initialize);
+
 
 /*----- functions -----*/
 initialize();
@@ -186,10 +190,14 @@ function render() {
   betBtns.style.visibility = inProgress ? 'hidden' : 'visible';
   dealBtn.style.visibility = inProgress || bet === 0 ? 'hidden' : 'visible';
   doublelBtn.style.visibility = inProgress && playerHand.length === 2 && bankroll >= bet ? 'visible' : 'hidden';
+  hitBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
+  stayBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
+  //playBtn.style.visibility = inProgress ? 'hidden' : 'visible';
+
   if (winner) {
-    winPopup.innerHTML='PUSH!';
-    winPopup.innerHTML='Winner Winner Chicken Dinner';
-    winPopup.innerHTML='You Lose';
+    t = winPopup.innerHTML='PUSH!';
+    p = winPopup.innerHTML='Winner Winner Chicken Dinner';
+    d = winPopup.innerHTML='';
   }
 }
 

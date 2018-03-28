@@ -27,15 +27,16 @@ main {
 }
 
 #option1 {
-    float: left;
+    float: right;
 }
 
 #option2 {
     float: right;
 }
 
-button {
-    width: 70px;
+button, .betting{
+    width: 100px;
+    height: 60px;
     margin: 20px 30px 0 30px;
     padding: 5px;
     background-color: red;
@@ -64,6 +65,7 @@ header > div {
     color: white;
     border-color: white;
     background-color: red;
+    display: right;
 }
 
 #win-popup{
@@ -74,12 +76,5 @@ header > div {
     text-align: center;
     color: red;
  }
- #win-popup .container {
-    background-color: black;
-    opacity: .8;
-    padding: 30px;
-    position: absolute;
-    top: -700px;
-    width: 100%;
-    box-sizing: border-box;
- }
+
+
