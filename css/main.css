@@ -90,7 +90,6 @@ header > div {
     background-color: black;
     display: none;
     align-content: center
-    
 }
 
 #instructions h1 {
@@ -101,12 +100,12 @@ header > div {
 }
 
 #instructions div {
-        display: block;
-        height: 100px;
-        width: 100px;
-        border-radius: 100%;
-        border: 2px solid black;
-        margin:auto;
+    display: block;
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    border: 2px solid black;
+    margin:auto;
 }
 
 .text {

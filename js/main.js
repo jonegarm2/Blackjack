@@ -33,14 +33,13 @@ dealBtn.addEventListener('click', deal);
 hitBtn.addEventListener('click', hit);
 stayBtn.addEventListener('click', stay);
 doublelBtn.addEventListener('click', double);
-                                          document.getElementById('reset').addEventListener('click', initialize);
+document.getElementById('reset').addEventListener('click', initialize);
 document.getElementById('openInstructionsBtn').addEventListener('click', function(){
   instructionsPage.style.display = 'block';
 });
 document.getElementById('closeInstructionsBtn').addEventListener('click', function(){
   instructionsPage.style.display = 'none';
 });
-
 
 /*----- functions -----*/
 initialize();
@@ -73,9 +72,6 @@ function generateDeck() {
       deck.push(new Card(suit + face, val));
     });
   }); 
-
-  // deck = deck.map(card => card.face = card.suit.toLowerCase() + card.face)
-
 }
 
 function shuffle() {
@@ -160,7 +156,7 @@ function stay() {
 }
 
 function dealerDraw() {
-  while(computeHand(dealerHand) < 17) { //&& computeHand(dealerHand) > 21) {
+  while(computeHand(dealerHand) < 17) {
     dealerHand.push(deck.pop()); 
   }
 }
@@ -191,7 +187,6 @@ function computeHand(hand) {
 function render() {
   var playerHtml = '';
   var dealerHtml = '';
-
   if (dealerHand && playerHand) {
     dealerHand.forEach(function(card, idx) {
       dealerHtml += `<div class="card ${idx || !inProgress ? card.face : 'back'}"></div>`;
@@ -223,7 +218,6 @@ function render() {
         winPopup.innerHTML='You lose!';
         break;
     }
-
   }
   showMessage = false;  
 }
