@@ -12,7 +12,7 @@ var dealerHand;
 var playerHand;
 var winner, blackjack;
 var instruction = null;
-var winPopup = document.getElementById('win-popup');
+var showMessage;
 
 /*----- cached element references -----*/
 var cash = document.getElementById('cash');
@@ -32,7 +32,8 @@ dealBtn.addEventListener('click', deal);
 hitBtn.addEventListener('click', hit);
 stayBtn.addEventListener('click', stay);
 doublelBtn.addEventListener('click', double);
-document.getElementById('reset').addEventListener('click', initialize);
+                                          document.getElementById('reset').addEventListener('click', initialize);
+
 
 /*----- functions -----*/
 initialize();
@@ -47,7 +48,7 @@ function betting(evt) {
     if (placeBet <= bankroll && ((bankroll + placeBet) >= 0) && ((bet + placeBet) >= 0)) {
       bankroll -= placeBet;
       bet += placeBet;
-    }
+    } 
   }
   render();
 }
@@ -108,16 +109,20 @@ function updateWinner() {
     var dealerTotal = computeHand(dealerHand);
     if (playerTotal > dealerTotal && playerTotal < 22) {
       winner = 'p';
-      p = winPopup.innerHTML='Winner Winner Chicken Dinner';
     } else if (dealerTotal > playerTotal && dealerTotal < 22) {
       winner = 'd';
-      d = winPopup.innerHTML='You lose!';
     } else if (dealerTotal === playerTotal) {
       winner = 't';
-      winPopup.innerHTML='PUSH!';
+    } else if(playerTotal > 21) {
+      winner = 'd';
+    } else if(dealerTotal > 21) {
+      winner ='p'
     }
   }    
-  if (winner) computeWinnings();
+  if (winner) {
+    showMessage = true;
+    computeWinnings();
+  }
 }
 
 function computeWinnings() {
@@ -198,15 +203,29 @@ function render() {
   doublelBtn.style.visibility = inProgress && playerHand.length === 2 && bankroll >= bet ? 'visible' : 'hidden';
   hitBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
   stayBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
+  winPopup.style.visibility = !inProgress && showMessage ? 'visible' : 'hidden';
+  if (winner && showMessage) {
+    switch(winner) {
+      case 'p':
+        winPopup.innerHTML='Winner Winner Chicken Dinner';
+        break;
+      case 't':
+        winPopup.innerHTML='PUSH!';
+        break;
+      case 'd':
+        winPopup.innerHTML='You lose!';
+        break;
+    }
 
-  // if (winner) {
-  //   t = winPopup.innerHTML='PUSH!';
-  //   p = winPopup.innerHTML='Winner Winner Chicken Dinner';
-  //   d = winPopup.innerHTML='You lose!';
-  //}
+  }
+  showMessage = false;  
 }
 
 function initialize() {
+  dealerHand = [];
+  playerHand = [];
+  inProgress = null;
+  winner = ""
   bankroll = 200;
   bet = 0;
   instructions = null;

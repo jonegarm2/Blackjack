@@ -66,15 +66,18 @@ header > div {
     border-color: white;
     background-color: red;
     display: right;
+    font-size: 28px;
 }
 
 #win-popup{
     position: relative;
-    top: 200px;
-    width: 500px;
+    font-size: 64px;
+    width: 550px;
     margin: 0 auto;
     text-align: center;
     color: red;
+    background-color: white;
+    border-radius: 20%
  }
 
 
