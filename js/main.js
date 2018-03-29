@@ -5,24 +5,11 @@ class Card {
       this.value = value;
     }
   }
-  var deck = [];
-  deck = deck.map(card => card.face = card.suit.toLowerCase() + card.face)
-  var suits = ['c', 's', 'd', 'h'];
-  var faces = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
-  suits.forEach(function(suit) {
-    faces.forEach(function(face){
-      var val = parseInt(face);
-      if (isNaN(val)) {
-        val = face === 'A' ? 11 : 10;
-      }
-      deck.push(new Card(suit + face, val));
-    });
-  }); 
 
 /*----- app's state (variables) -----*/
 var deck, inProgress, bankroll, bet;
-var dealerHand = [];
-var playerHand = [];
+var dealerHand;
+var playerHand;
 var winner, blackjack;
 var instruction = null;
 var winPopup = document.getElementById('win-popup');
@@ -39,25 +26,21 @@ var winPopup = document.getElementById('win-popup');
 var hitBtn = document.getElementById('hit');
 var stayBtn = document.getElementById('stay');
 
-
-//need to work on this to disable//fade betting buttons
-                                      //var btn = document.getElementsByClassName("betting"); btn.disabled = false; 
-
-
 /*----- event listeners -----*/
-document.getElementById('option2').addEventListener('click', betting);
+betBtns.addEventListener('click', betting);
 dealBtn.addEventListener('click', deal);
-document.getElementById('hit').addEventListener('click', hit);
-document.getElementById('stay').addEventListener('click', stay);
+hitBtn.addEventListener('click', hit);
+stayBtn.addEventListener('click', stay);
 doublelBtn.addEventListener('click', double);
 document.getElementById('reset').addEventListener('click', initialize);
-
 
 /*----- functions -----*/
 initialize();
 
 function betting(evt) {
   if (evt.target.classList[0] === "betting") {
+    generateDeck();
+    shuffle();
     dealerHand = [];
     playerHand = [];
     let placeBet = parseInt(evt.target.classList[1]);
@@ -67,6 +50,24 @@ function betting(evt) {
     }
   }
   render();
+}
+
+function generateDeck() {
+  deck = [];
+  var suits = ['c', 's', 'd', 'h'];
+  var faces = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
+  suits.forEach(function(suit) {
+    faces.forEach(function(face){
+      var val = parseInt(face);
+      if (isNaN(val)) {
+        val = face === 'A' ? 11 : 10;
+      }
+      deck.push(new Card(suit + face, val));
+    });
+  }); 
+
+  // deck = deck.map(card => card.face = card.suit.toLowerCase() + card.face)
+
 }
 
 function shuffle() {
@@ -83,17 +84,16 @@ function deal() {
   winner = null;
   blackjack = null;
   canWager = false;
-  shuffle();
   playerHand.push(...deck.splice(deck.length-2, 2));
   dealerHand.push(...deck.splice(deck.length-2, 2));
   var playerTotal = computeHand(playerHand);
   var dealerTotal = computeHand(dealerHand);
   if (dealerTotal === 21 && playerTotal === 21) {
-    blackjack = "t";
+    blackjack = 't';
   } else if (dealerTotal === 21) {
-    blackjack = "d";
+    blackjack = 'd';
   } else if (playerTotal === 21) {
-    blackjack = "p";
+    blackjack = 'p';
   }
   inProgress = !blackjack;  
   updateWinner();
@@ -106,19 +106,21 @@ function updateWinner() {
   } else if (!inProgress) {
     var playerTotal = computeHand(playerHand);
     var dealerTotal = computeHand(dealerHand);
-    if (playerTotal > dealerTotal) {
+    if (playerTotal > dealerTotal && playerTotal < 22) {
       winner = 'p';
-    } else if (dealerTotal > playerTotal) {
+      p = winPopup.innerHTML='Winner Winner Chicken Dinner';
+    } else if (dealerTotal > playerTotal && dealerTotal < 22) {
       winner = 'd';
-    } else {
+      d = winPopup.innerHTML='You lose!';
+    } else if (dealerTotal === playerTotal) {
       winner = 't';
+      winPopup.innerHTML='PUSH!';
     }
-  }
+  }    
   if (winner) computeWinnings();
 }
 
 function computeWinnings() {
-  // use blackjack and/or winner vars to compute
   if (winner === 't') {
     bankroll += bet;
   } else if (blackjack === 'p') {
@@ -129,7 +131,7 @@ function computeWinnings() {
   bet = 0;
 }
 
-function hit(evt) {
+function hit() {
   playerHand.push(deck.pop());
   if (computeHand(playerHand) > 21) {
     inProgress = false;
@@ -146,7 +148,7 @@ function stay() {
 }
 
 function dealerDraw() {
-  while(computeHand(dealerHand) < 17 || computeHand(dealerHand) > 21) {
+  while(computeHand(dealerHand) < 17) { //&& computeHand(dealerHand) > 21) {
     dealerHand.push(deck.pop()); 
   }
 }
@@ -177,12 +179,16 @@ function computeHand(hand) {
 function render() {
   var playerHtml = '';
   var dealerHtml = '';
-  dealerHand.forEach(function(card, idx) {
-    dealerHtml += `<div class="card ${idx || !inProgress ? card.face : 'back'}"></div>`;
-  });
-  playerHand.forEach(function(card, idx) {
-    playerHtml += `<div class="card ${card.face}"></div>`;
-  });
+
+  if (dealerHand && playerHand) {
+    dealerHand.forEach(function(card, idx) {
+      dealerHtml += `<div class="card ${idx || !inProgress ? card.face : 'back'}"></div>`;
+    });
+    playerHand.forEach(function(card, idx) {
+      playerHtml += `<div class="card ${card.face}"></div>`;
+    });
+  }
+
   dealerCardsEl.innerHTML = dealerHtml;
   playerCardsEl.innerHTML = playerHtml;
   cash.innerHTML= `Bankroll: $${bankroll}.00`;
@@ -192,13 +198,12 @@ function render() {
   doublelBtn.style.visibility = inProgress && playerHand.length === 2 && bankroll >= bet ? 'visible' : 'hidden';
   hitBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
   stayBtn.style.visibility = !inProgress ? 'hidden' : 'visible';
-  //playBtn.style.visibility = inProgress ? 'hidden' : 'visible';
 
-  if (winner) {
-    t = winPopup.innerHTML='PUSH!';
-    p = winPopup.innerHTML='Winner Winner Chicken Dinner';
-    d = winPopup.innerHTML='';
-  }
+  // if (winner) {
+  //   t = winPopup.innerHTML='PUSH!';
+  //   p = winPopup.innerHTML='Winner Winner Chicken Dinner';
+  //   d = winPopup.innerHTML='You lose!';
+  //}
 }
 
 function initialize() {
