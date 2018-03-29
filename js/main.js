@@ -15,6 +15,7 @@ var instruction = null;
 var showMessage;
 
 /*----- cached element references -----*/
+var instructionsPage = document.getElementById('instructions');
 var cash = document.getElementById('cash');
 var wager = document.getElementById('bet');
 var betBtns = document.getElementById('option2');
@@ -33,6 +34,12 @@ hitBtn.addEventListener('click', hit);
 stayBtn.addEventListener('click', stay);
 doublelBtn.addEventListener('click', double);
                                           document.getElementById('reset').addEventListener('click', initialize);
+document.getElementById('openInstructionsBtn').addEventListener('click', function(){
+  instructionsPage.style.display = 'block';
+});
+document.getElementById('closeInstructionsBtn').addEventListener('click', function(){
+  instructionsPage.style.display = 'none';
+});
 
 
 /*----- functions -----*/
