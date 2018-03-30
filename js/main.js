@@ -209,7 +209,7 @@ function render() {
   if (winner && showMessage) {
     switch(winner) {
       case 'p':
-        winPopup.innerHTML='Winner Winner Chicken Dinner';
+        winPopup.innerHTML='Winner Winner Chicken Dinner!';
         break;
       case 't':
         winPopup.innerHTML='PUSH!';
